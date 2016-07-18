@@ -68,53 +68,69 @@
 
 /* 2 */
 (function(str){
-	var arr = [];
+	var phrase;
 	var simbols = [];
-	var newArray = [];
-	var i, length, j, d, flag;
+	var result = [];
+	var length, j, i, firstWorld, flag, expr;
+	
+	phrase = str.replace(/(\!|\:|\;|\,|\?|\.)/g, ' ').trim().split(/\s/g);
+	
 	length = str.length;
 	j = 0;
 	for(i = 0; i<length; i++) {
 		if(str[i] == '.' || str[i] == '?' || str[i] == ',' || str[i] == ';' || str[i] == ':' || str[i] == '!' || str[i] == ' ') {
-			simbols[j] =  str[i];
-			j++;
+			if(simbols[j]) {
+				simbols[j] = simbols[j]+str[i];
+			}
+			else {
+				simbols[j] = str[i];
+			}
 		}
 		else {
-			if(!arr[j]) {
-				arr[j] = str[i];
-			}
-			else {
-				arr[j] = arr[j]+str[i];
-			}
-			if(!newArray[i]) {
-				newArray[i] = str[i];
-			}
-			else {
-				newArray.push(str[i]);
-			}
-			newArray[i] = str[i];
+			j++;
 		}
 	}
-
-	for(i = 0; i<newArray.length; i++) {
+	for (i = 0; i < simbols.length; i++) {
+		if ( i in simbols ) {
+			result.push(simbols[i]);
+		}
+	}
+	simbols = result;
+	
+	firstWorld = phrase[0];
+	
+	length = firstWorld.length;
+	result = [];
+	for(i = 0; i<length; i++) {
 		flag = true;
-		for(j = 0; j<arr.length; j++) {
-			if(!arr[j].match(newArray[i])) {
+		for(j = 0; j<phrase.length; j++) {
+			if(phrase[j].indexOf(firstWorld[i]) === -1) {
 				flag = false;
-				break;
 			}
 		}
 		if(flag) {
-			for(j = 0; j<arr.length; j++) {
-				arr[j] = arr[j].replace(newArray[i], "");
+			for(j = 0; j<phrase.length; j++) {
+				expr = new RegExp(firstWorld[i] , "ig");
+				phrase[j] = phrase[j].replace(expr, "");
 			}
 		}
 	}
 	
-	for(i = 0; i<arr.length; i++) {
-		arr[i] = arr[i]+simbols[i];
+	if(phrase[0].indexOf(str[0]) > 0) {
+		for(i = 0; i<phrase.length; i++) {
+			if(simbols[i] && phrase[i])
+				phrase[i] = phrase[i]+simbols[i];
+		}
+		console.log(phrase.join(""));
+		return phrase.join("");
+	}
+	else {
+		for(i = 0; i<simbols.length; i++) {
+			if(simbols[i] && phrase[i])
+				simbols[i] = simbols[i]+phrase[i];
+		}
+		console.log(simbols.join(""));
+		return simbols.join("");
 	}
 	
-	console.log(arr.join(""));
-	
-})("!??слово!плов олово$$$!");
+})("Чего изволите?Барин!");
